@@ -78,7 +78,7 @@ No special Cursor skill — use the [Railway CLI](https://docs.railway.com/guide
 4. Variables on the **web** service:
    - `DATABASE_URL` — from the Postgres service (reference variable)
    - `AUTH_SECRET` — `openssl rand -base64 32`
-   - `NEXTAUTH_URL` — your public URL, e.g. `https://your-app.up.railway.app`
+   - `NEXTAUTH_URL` — use `${{RAILWAY_STATIC_URL}}` (recommended), or set manually after generating a public domain, e.g. `https://your-app.up.railway.app`. Do **not** leave `https://` alone — Auth.js will crash.
 5. **First deploy only** — populate the DB from your laptop (Postgres data persists across redeploys):
 
    ```bash
