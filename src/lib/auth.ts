@@ -2,19 +2,15 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
+import { authConfig } from "@/lib/auth.config";
 import { sanitizeAuthEnv } from "@/lib/auth-url";
 import { prisma } from "@/lib/db";
 
 sanitizeAuthEnv();
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  trustHost: true,
-  secret: process.env.AUTH_SECRET,
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: "/login/",
-  },
   providers: [
     Credentials({
       name: "credentials",
@@ -45,29 +41,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    authorized({ auth, request }) {
-      const path = request.nextUrl.pathname;
-      if (path.startsWith("/edit") || path.startsWith("/api/entries")) {
-        return !!auth?.user;
-      }
-      return true;
-    },
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = (user as { role?: string }).role;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        (session.user as { role?: string }).role = token.role as string;
-      }
-      return session;
-    },
-  },
 });
 
 function isStaleSessionError(error: unknown): boolean {

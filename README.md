@@ -79,12 +79,19 @@ No special Cursor skill — use the [Railway CLI](https://docs.railway.com/guide
    - `DATABASE_URL` — from the Postgres service (reference variable)
    - `AUTH_SECRET` — `openssl rand -base64 32`
    - `NEXTAUTH_URL` — use `${{RAILWAY_STATIC_URL}}` (recommended), or set manually after generating a public domain, e.g. `https://your-app.up.railway.app`. Do **not** leave `https://` alone — Auth.js will crash.
-5. **First deploy only** — populate the DB from your laptop (Postgres data persists across redeploys):
+5. **First deploy only** — populate the DB from your **laptop**, not `railway ssh` (the production image has no `tsx`, scripts, or git). Postgres data persists across redeploys.
+
+   Use the Postgres **public** URL (`*.proxy.rlwy.net` or similar), **not** `postgres.railway.internal` (that hostname only works inside Railway).
 
    ```bash
+   cd lives-of-saints-web
+   npm install
    railway link
-   railway variables   # copy DATABASE_URL, or use Railway → Postgres → Connect
-   DATABASE_URL='postgresql://…' npm run db:populate
+
+   # Railway dashboard → Postgres → Connect → Public / TCP proxy URL
+   export DATABASE_URL='postgresql://postgres:PASSWORD@HOST:PORT/railway'
+
+   npm run db:populate
    npm run create-user -- you@example.com yourpassword
    ```
 

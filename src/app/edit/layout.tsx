@@ -20,7 +20,7 @@ export default async function EditLayout({
 
   const session = await getSession();
   if (!session?.user) {
-    redirect("/login/?callbackUrl=/edit/new/");
+    redirect("/login/");
   }
 
   let sections;

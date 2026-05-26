@@ -1,34 +1,25 @@
+import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { authConfig } from "@/lib/auth.config";
+import { sanitizeAuthEnv } from "@/lib/auth-url";
 
-export async function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname;
+sanitizeAuthEnv();
+
+const { auth } = NextAuth(authConfig);
+
+export default auth((req) => {
+  const path = req.nextUrl.pathname;
   const isProtected =
     path.startsWith("/edit") || path.startsWith("/api/entries");
 
-  if (!isProtected) {
-    return NextResponse.next();
-  }
-
-  let token = null;
-  try {
-    token = await getToken({
-      req: request,
-      secret: process.env.AUTH_SECRET,
-    });
-  } catch {
-    token = null;
-  }
-
-  if (!token) {
-    const login = new URL("/login/", request.url);
-    login.searchParams.set("callbackUrl", request.url);
+  if (isProtected && !req.auth) {
+    const login = new URL("/login/", req.nextUrl);
+    login.searchParams.set("callbackUrl", req.url);
     return NextResponse.redirect(login);
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: ["/edit/:path*", "/api/entries/:path*"],
