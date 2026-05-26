@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply font-serif text-ink-800 antialiased;
+    background: #f8f4ec;
+    background-image: radial-gradient(
+        ellipse 120% 80% at 50% -20%,
+        rgba(201, 165, 92, 0.14),
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 70% 40% at 0% 100%,
+        rgba(92, 46, 58, 0.05),
+        transparent 50%
+      ),
+      linear-gradient(180deg, #fdfbf7 0%, #efe6d6 100%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background-color: rgba(201, 165, 92, 0.35);
+    color: #1f1812;
+  }
+}
+
+@layer components {
+  .ornamental-rule {
+    @apply flex items-center justify-center gap-3;
+  }
+
+  .ornamental-rule-line {
+    @apply h-px w-12 bg-gradient-to-r from-transparent via-gold-500/70 to-transparent sm:w-20;
+  }
+
+  .ornamental-rule-gem {
+    @apply text-sm text-gold-600;
+  }
+
+  .manuscript-sheet {
+    @apply rounded-sm border border-gold-600/20 bg-parchment-50/90 px-6 py-8 shadow-manuscript backdrop-blur-sm md:px-10 md:py-10;
+  }
+
+  .btn-primary {
+    @apply rounded-sm bg-wine-800 px-4 py-2 text-sm font-medium text-parchment-50 shadow-sm transition hover:bg-wine-900;
+  }
+
+  .btn-secondary {
+    @apply rounded-sm border border-gold-600/40 bg-parchment-100 px-4 py-2 text-sm font-medium text-wine-800 transition hover:border-gold-600 hover:bg-parchment-200;
+  }
+
+  .breadcrumb {
+    @apply font-sans text-xs font-medium uppercase tracking-wider text-wine-600/80;
+  }
+
+  .breadcrumb a {
+    @apply text-wine-700 underline decoration-gold-500/40 underline-offset-2 transition hover:text-wine-900 hover:decoration-gold-600;
+  }
+
+  .prose-manuscript {
+    --tw-prose-body: #2c2419;
+    --tw-prose-headings: #3a1c26;
+    --tw-prose-links: #5c2e3a;
+    --tw-prose-bold: #1f1812;
+    --tw-prose-quotes: #5c4f3f;
+    --tw-prose-quote-borders: #c9a55c;
+    max-width: none;
+  }
+
+  .prose-manuscript > p:first-of-type::first-letter {
+    float: left;
+    margin: 0.05em 0.12em 0 0;
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-size: 3.25rem;
+    font-weight: 600;
+    line-height: 0.82;
+    color: #3a1c26;
+  }
+}
+
+/* Reader font size (Settings) */
+.reader-content {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+html[data-reader-font="medium"] .reader-content {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+html[data-reader-font="large"] .reader-content {
+  font-size: 1.125rem;
+  line-height: 1.85;
+}
+
+html[data-reader-font="xlarge"] .reader-content {
+  font-size: 1.25rem;
+  line-height: 1.9;
+}
+
+html[data-reader-font="medium"] .reader-content .prose-manuscript {
+  font-size: 1rem;
+}
+
+html[data-reader-font="large"] .reader-content .prose-manuscript {
+  font-size: 1.125rem;
+}
+
+html[data-reader-font="xlarge"] .reader-content .prose-manuscript {
+  font-size: 1.25rem;
+}

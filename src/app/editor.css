@@ -1,0 +1,12 @@
+/* MDXEditor tweaks to match site chrome */
+.rich-text-editor ._toolbarRoot_ {
+  border-radius: 0;
+}
+
+.rich-text-editor .mdxeditor {
+  font-family: var(--font-source-sans), system-ui, sans-serif;
+}
+
+.rich-text-editor .mdxeditor-root-contenteditable {
+  min-height: 20rem;
+}
