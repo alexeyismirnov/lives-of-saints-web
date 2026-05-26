@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { SITE_TITLES, type Lang } from "@/lib/constants";
 import { languageSwitchPath } from "@/lib/language-switch";
+import { SearchBox } from "@/components/search/SearchBox";
 import { SettingsMenu } from "./SettingsMenu";
 
 export function Header({
@@ -46,7 +47,30 @@ export function Header({
           </span>
         </Link>
 
+        <SearchBox lang={lang} />
+
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <Link
+            href={`/${lang}/search/`}
+            className="rounded-sm border border-gold-600/40 p-2 text-gold-400 transition hover:bg-wine-800 hover:text-parchment-50 sm:hidden"
+            aria-label={lang === "ru" ? "Поиск" : "Search"}
+          >
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </Link>
+
           <SettingsMenu lang={lang} variant="dark" />
 
           <nav

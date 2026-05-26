@@ -105,6 +105,7 @@ No special Cursor skill — use the [Railway CLI](https://docs.railway.com/guide
 | `/{lang}/{month}/` | Month index (grouped by day) |
 | `/{lang}/triodion/` | Triodion index |
 | `/{lang}/{section}/{slug}/` | Saint article |
+| `/{lang}/search/` | Fuzzy search by entry title |
 | `/login/` | Editor sign-in |
 | `/edit/new/` | Create entry (auth required) |
 | `/edit/{lang}/{section}/{slug}/` | Edit entry |
