@@ -1,9 +1,9 @@
 #!/bin/sh
 set -e
 
-if [ -n "$DATABASE_URL" ] && [ -x ./node_modules/.bin/prisma ]; then
+if [ -n "$DATABASE_URL" ] && command -v prisma >/dev/null 2>&1; then
   echo "Running Prisma migrations…"
-  ./node_modules/.bin/prisma migrate deploy
+  prisma migrate deploy
 fi
 
 echo "Starting Next.js…"

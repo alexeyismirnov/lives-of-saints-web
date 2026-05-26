@@ -21,8 +21,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apk add --no-cache python3 py3-pip && \
+RUN apk add --no-cache python3 py3-pip openssl && \
     pip3 install --break-system-packages psycopg2-binary tomli
+
+# Full Prisma CLI for `migrate deploy` (partial .bin copy misses WASM binaries)
+RUN npm install -g prisma@6.19.3
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
@@ -32,8 +35,6 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 COPY scripts/start-production.sh ./start-production.sh
 
 RUN chmod +x ./start-production.sh
