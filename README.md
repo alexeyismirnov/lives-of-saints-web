@@ -2,7 +2,7 @@
 
 Dynamic, database-backed site for Orthodox saints' lives in **English** and **Russian**. Replaces the Hugo static site while preserving URL structure (`/en/january/...`, `/ru/triodion/...`).
 
-This project lives in **`lives-of-saints-web/`**, separate from the Hugo `content/` and `themes/` in the parent repo.
+This project is **standalone** from [lives-of-saints-hugo](https://github.com/alexeyismirnov/lives-of-saints-hugo). Initial database content is imported by cloning that repo (including git submodules for the `lives` markdown trees).
 
 ## Stack
 
@@ -10,7 +10,6 @@ This project lives in **`lives-of-saints-web/`**, separate from the Hugo `conten
 - **PostgreSQL** + **Prisma**
 - **Tailwind CSS**
 - **Auth.js** (Phase 2 editor login)
-- Import: **Python** [`scripts/import_hugo_to_db.py`](scripts/import_hugo_to_db.py)
 
 ## Quick start (local)
 
@@ -25,10 +24,10 @@ docker compose up --build
 In another terminal (first time only):
 
 ```bash
-docker compose exec web npx prisma migrate deploy
-docker compose exec web npm run import:content
 docker compose exec web npx tsx scripts/create_editor_user.ts you@example.com yourpassword
 ```
+
+(`docker compose` runs migrations, clones Hugo content with submodules, and imports automatically.)
 
 Open [http://localhost:3000/en/](http://localhost:3000/en/)
 
@@ -41,25 +40,22 @@ cp .env.example .env
 # Start Postgres locally and set DATABASE_URL
 
 npx prisma migrate deploy
-npm run db:seed-sections
-CONTENT_DIR=../content npm run import:content
+npm run db:populate    # clone Hugo repo + submodules, seed sections, import entries
 npm run create-user -- you@example.com yourpassword
 npm run dev
 ```
 
-If you see **Internal Server Error** (especially on `/login/` or `/edit/new/`):
+### Database population
 
-1. Stop **all** running `next dev` processes for this project (only one dev server may use `.next`).
-2. Clear the build cache and restart:
+`npm run db:populate` runs:
 
-```bash
-npm run dev:clean
-```
+1. **`content:fetch`** — clones [lives-of-saints-hugo](https://github.com/alexeyismirnov/lives-of-saints-hugo) into `.content-source/lives-of-saints-hugo` with `git clone --recurse-submodules` (or `git pull` + submodule update if already present). This pulls in:
+   - `content/en/lives` → [gitbook-lives-en](https://github.com/alexeyismirnov/gitbook-lives-en)
+   - `content/ru/lives` → [gitbook-lives-ru](https://github.com/alexeyismirnov/gitbook-lives-ru)
+2. **`db:seed-sections`** — calendar months + Triodion in PostgreSQL
+3. **`import:content`** — reads `.content-source/lives-of-saints-hugo/content` by default
 
-3. Sign in at `/login/` before opening `/edit/new/`.
-4. If login worked before but fails after changing `AUTH_SECRET`, clear site cookies for `localhost` or use a private window.
-
-`npm run dev:fresh` also tries to stop other dev servers in this repo before cleaning `.next`.
+Re-run `npm run content:fetch` and `npm run import:content` after upstream Hugo/content changes.
 
 ## Environment variables
 
@@ -68,14 +64,15 @@ npm run dev:clean
 | `DATABASE_URL` | PostgreSQL connection string |
 | `AUTH_SECRET` | Random secret for Auth.js (`openssl rand -base64 32`) |
 | `NEXTAUTH_URL` | Public site URL (e.g. `https://agios.bio`) |
-| `CONTENT_DIR` | Path to Hugo `content/` for import (default `../content`) |
+| `CONTENT_DIR` | Optional override for import path (default: `.content-source/lives-of-saints-hugo/content`) |
+| `HUGO_SOURCE_REPO` | Optional override for Hugo git URL |
 
 ## Railway deployment
 
 1. Create a **PostgreSQL** service and a **Web** service from this directory.
 2. Set `DATABASE_URL`, `AUTH_SECRET`, `NEXTAUTH_URL` on the web service.
-3. **Release command**: `npx prisma migrate deploy && npm run import:content`  
-   (mount or copy parent `content/` into the image, or run import from CI once.)
+3. **Release command** (image needs `git` for first deploy):  
+   `npx prisma migrate deploy && npm run db:populate`
 4. Deploy; point custom domain to the web service.
 
 ## Routes
@@ -90,6 +87,14 @@ npm run dev:clean
 | `/edit/new/` | Create entry (auth required) |
 | `/edit/{lang}/{section}/{slug}/` | Edit entry |
 
-## Parent Hugo content
+## Content source
 
-Import reads from `../content` (sibling to this folder). The Hugo site remains in the repo for reference and re-import.
+The Hugo site is **not** a sibling directory of this repo. It is fetched on demand:
+
+```
+.content-source/lives-of-saints-hugo/   ← git clone (gitignored)
+  content/
+    en/lives/   ← submodule
+    ru/lives/   ← submodule
+    January/ …
+```

@@ -25,8 +25,9 @@ export default async function NewEntryPage({
           content:
         </p>
         <pre className="rounded-sm bg-parchment-200 p-4 font-mono text-xs text-ink-900">
+          npm run content:fetch{"\n"}
           npm run db:seed-sections{"\n"}
-          CONTENT_DIR=../content npm run import:content
+          npm run import:content
         </pre>
         <p className="mt-4">
           <Link

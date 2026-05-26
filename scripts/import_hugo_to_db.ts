@@ -1,16 +1,14 @@
 /**
  * Import Hugo content/ into PostgreSQL via Prisma.
- * Usage: CONTENT_DIR=../content npx tsx scripts/import_hugo_to_db.ts
+ * Run `npm run content:fetch` first to clone lives-of-saints-hugo with submodules.
  */
 import { PrismaClient, Language } from "@prisma/client";
 import fs from "fs";
 import path from "path";
+import { DEFAULT_CONTENT_DIR, resolveContentDir } from "./lib/content-source";
 
 const prisma = new PrismaClient();
-const ROOT = path.resolve(__dirname, "..");
-const CONTENT_DIR = path.resolve(
-  process.env.CONTENT_DIR || path.join(ROOT, "..", "content")
-);
+const CONTENT_DIR = resolveContentDir();
 
 const MONTH_DIRS = [
   "January", "February", "March", "April", "May", "June",
@@ -200,6 +198,10 @@ async function importLang(lang: Language, slugToId: Map<string, string>) {
 async function main() {
   if (!fs.existsSync(CONTENT_DIR)) {
     console.error(`CONTENT_DIR not found: ${CONTENT_DIR}`);
+    console.error(
+      `Clone the Hugo site first: npm run content:fetch\n` +
+        `(expected default: ${DEFAULT_CONTENT_DIR})`
+    );
     process.exit(1);
   }
   console.log(`Importing from ${CONTENT_DIR}`);

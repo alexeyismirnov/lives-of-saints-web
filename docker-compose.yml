@@ -20,21 +20,21 @@ services:
       context: .
       target: deps
     working_dir: /app
-    command: sh -c "npm install && npx prisma migrate deploy && npm run import:content && npm run dev"
+    command: sh -c "npm install && npx prisma migrate deploy && npm run db:populate && npm run dev"
     ports:
       - "3000:3000"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/saints?schema=public
       AUTH_SECRET: dev-secret-change-in-production
       NEXTAUTH_URL: http://localhost:3000
-      CONTENT_DIR: /content
     volumes:
       - .:/app
       - /app/node_modules
-      - ../content:/content:ro
+      - hugo_content_source:/app/.content-source
     depends_on:
       db:
         condition: service_healthy
 
 volumes:
   postgres_data:
+  hugo_content_source:

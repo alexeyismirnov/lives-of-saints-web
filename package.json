@@ -13,7 +13,9 @@
     "db:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
+    "content:fetch": "tsx --env-file=.env scripts/fetch_hugo_source.ts",
     "import:content": "tsx --env-file=.env scripts/import_hugo_to_db.ts",
+    "db:populate": "npm run content:fetch && npm run db:seed-sections && npm run import:content",
     "create-user": "tsx --env-file=.env scripts/create_editor_user.ts",
     "db:seed-sections": "tsx --env-file=.env scripts/seed_sections.ts"
   },

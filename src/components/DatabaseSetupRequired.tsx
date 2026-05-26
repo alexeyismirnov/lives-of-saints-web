@@ -13,7 +13,7 @@ const COPY: Record<
       "cp .env.example .env",
       "docker compose up -d db",
       "npx prisma migrate deploy",
-      "CONTENT_DIR=../content npm run import:content",
+      "npm run db:populate",
       "npm run dev",
     ],
   },

@@ -3,7 +3,8 @@
 Import Hugo content/ into PostgreSQL (SaintEntry, Section, SitePage).
 
 Usage:
-  CONTENT_DIR=../content DATABASE_URL=postgresql://... python scripts/import_hugo_to_db.py
+  npm run content:fetch   # clone Hugo repo with submodules first
+  npm run import:content  # preferred (TypeScript)
 
 Requires: psycopg2-binary, tomli (py3.10) or tomllib (py3.11+)
 """
@@ -28,7 +29,8 @@ except ImportError:
     sys.exit(1)
 
 ROOT = Path(__file__).resolve().parent.parent
-CONTENT_DIR = Path(os.environ.get("CONTENT_DIR", ROOT.parent / "content"))
+DEFAULT_CONTENT_DIR = ROOT / ".content-source" / "lives-of-saints-hugo" / "content"
+CONTENT_DIR = Path(os.environ.get("CONTENT_DIR", DEFAULT_CONTENT_DIR))
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 MONTH_DIRS = [

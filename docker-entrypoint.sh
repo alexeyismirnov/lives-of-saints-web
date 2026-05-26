@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 npx prisma migrate deploy
-if [ -f scripts/import_hugo_to_db.py ] && [ -d "${CONTENT_DIR:-/content}" ]; then
-  python3 scripts/import_hugo_to_db.py || echo "Import skipped or failed"
+if [ "${RUN_DB_POPULATE:-0}" = "1" ]; then
+  npm run db:populate
 fi
 exec "$@"

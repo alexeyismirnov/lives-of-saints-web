@@ -1,5 +1,5 @@
 FROM node:22-alpine AS base
-RUN apk add --no-cache python3 py3-pip
+RUN apk add --no-cache python3 py3-pip git
 
 FROM base AS deps
 WORKDIR /app
