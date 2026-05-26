@@ -69,11 +69,26 @@ Re-run `npm run content:fetch` and `npm run import:content` after upstream Hugo/
 
 ## Railway deployment
 
-1. Create a **PostgreSQL** service and a **Web** service from this directory.
-2. Set `DATABASE_URL`, `AUTH_SECRET`, `NEXTAUTH_URL` on the web service.
-3. **Release command** (image needs `git` for first deploy):  
-   `npx prisma migrate deploy && npm run db:populate`
-4. Deploy; point custom domain to the web service.
+No special Cursor skill — use the [Railway CLI](https://docs.railway.com/guides/cli) (`npm i -g @railway/cli`).
+
+1. `railway login`
+2. From this directory: `bash scripts/railway-deploy.sh`  
+   (or link the GitHub repo in the Railway dashboard and deploy from `lives-of-saints-web/`)
+3. Add **PostgreSQL** in the project if missing: `railway add --database postgres`
+4. Variables on the **web** service:
+   - `DATABASE_URL` — from the Postgres service (reference variable)
+   - `AUTH_SECRET` — `openssl rand -base64 32`
+   - `NEXTAUTH_URL` — your public URL, e.g. `https://your-app.up.railway.app`
+5. **First deploy only** — populate the DB from your laptop (Postgres data persists across redeploys):
+
+   ```bash
+   railway link
+   railway variables   # copy DATABASE_URL, or use Railway → Postgres → Connect
+   DATABASE_URL='postgresql://…' npm run db:populate
+   npm run create-user -- you@example.com yourpassword
+   ```
+
+6. Later deploys run **migrations only** on startup (`start-production.sh`); they do **not** re-import Hugo content unless you run `db:populate` manually.
 
 ## Routes
 

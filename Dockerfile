@@ -4,6 +4,8 @@ RUN apk add --no-cache python3 py3-pip git
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
+COPY prisma ./prisma
+# postinstall runs prisma generate; schema must exist before npm ci
 RUN npm ci || npm install
 
 FROM base AS builder
@@ -25,17 +27,20 @@ RUN apk add --no-cache python3 py3-pip && \
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY scripts ./scripts
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+COPY scripts/start-production.sh ./start-production.sh
+
+RUN chmod +x ./start-production.sh
 
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-CMD ["node", "server.js"]
+CMD ["./start-production.sh"]
