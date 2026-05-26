@@ -110,3 +110,12 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
+
+model EventLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  message   String   @db.Text
+
+  @@index([createdAt(sort: Desc)])
+  @@map("event_logs")
+}

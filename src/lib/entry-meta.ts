@@ -17,7 +17,7 @@ export const RU_MONTH_GENITIVE: Record<string, string> = {
   december: "декабря",
 };
 
-const EN_MONTH_NAMES: Record<string, string> = {
+export const EN_MONTH_NAMES: Record<string, string> = {
   january: "January",
   february: "February",
   march: "March",

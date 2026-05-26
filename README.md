@@ -45,6 +45,18 @@ npm run create-user -- you@example.com yourpassword
 npm run dev
 ```
 
+### Editor event log
+
+Creates, edits, and deletes of saint entries append a one-line message to the `event_logs` table. View newest first:
+
+```bash
+npm run show-log
+```
+
+Example line:
+
+`2025-05-26 14:30:00 UTC User editor@example.com added page "Saint Nicholas" on date "6th of December"`
+
 ### Database population
 
 `npm run db:populate` runs:

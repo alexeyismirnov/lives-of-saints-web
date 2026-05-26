@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import type { Lang } from "@/lib/constants";
+import { logEntryChangeSafe } from "@/lib/event-log";
 import { resolveUniqueSlug } from "@/lib/entries";
 import { getNextTriodionSortWeight, isTriodionSection } from "@/lib/sections";
 
@@ -48,6 +49,13 @@ export async function POST(request: Request) {
         updatedById: session.user.id,
       },
     });
+
+    const section = await prisma.section.findUniqueOrThrow({
+      where: { id: sectionId },
+      select: { slug: true },
+    });
+    await logEntryChangeSafe("added", session.user, entry, section);
+
     return NextResponse.json(entry);
   } catch {
     return NextResponse.json(

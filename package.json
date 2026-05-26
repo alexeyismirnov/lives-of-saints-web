@@ -17,6 +17,7 @@
     "import:content": "tsx --env-file=.env scripts/import_hugo_to_db.ts",
     "db:populate": "npm run content:fetch && npm run db:seed-sections && npm run import:content",
     "create-user": "tsx --env-file=.env scripts/create_editor_user.ts",
+    "show-log": "tsx --env-file=.env scripts/show_log.ts",
     "db:seed-sections": "tsx --env-file=.env scripts/seed_sections.ts"
   },
   "dependencies": {
